@@ -1,54 +1,81 @@
+// server.js
+
 const express = require("express");
 const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config(); // Load environment variables from .env file
 const { graphqlHTTP } = require("express-graphql");
-const movieResolvers = require("./resolvers/resolvers");
-const movieSchema = require("./schema/schema");
+const movieResolvers = require("./resolvers/resolvers"); // Assuming this exports your root resolvers
+const movieSchema = require("./schema/schema");     // Assuming this exports your GraphQLSchema object
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
-const morgan = require("morgan");
+const morgan = require("morgan"); // HTTP request logger middleware
 
 const app = express();
 
-// 🔗 MongoDB Connection
-mongoose
-  .connect(process.env.MONGODB_URI, {
-  })
-  .then(() => console.log(" MongoDB Connected Successfully!"))
-  .catch((err) => console.error(" Connection Error:", err));
-
-// Middleware
+// --- Middleware ---
+// Enable CORS for all origins (you might want to restrict this in production)
 app.use(cors());
+// Add security headers
 app.use(helmet());
+// Compress response bodies for all requests
 app.use(compression());
+// Log HTTP requests to the console
 app.use(morgan("combined"));
 
-//GraphQL Endpoint
+// --- MongoDB Connection ---
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("✅ MongoDB Connected Successfully!"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+
+// --- Root Route ---
+app.get('/', (req, res) => {
+  res.send('🎬 Welcome to CineCraft Backend! Visit /graphql to explore the API.');
+});
+
+// --- GraphQL Endpoint ---
+// This is the core part that exposes your GraphQL API and GraphiQL UI
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema: movieSchema,
-    rootValue: movieResolvers,
-    graphiql: process.env.NODE_ENV !== "production", // Enables GraphiQL UI
+    schema: movieSchema,    // Your GraphQL schema definition
+    rootValue: movieResolvers, // Your resolver functions for the root types
+    // Enable GraphiQL UI if not in production environment
+    // GraphiQL is an in-browser IDE for exploring GraphQL APIs
+    graphiql: process.env.NODE_ENV !== "production",
   })
 );
 
-// Health Check
-app.get("/health", (req, res) => res.status(200).send("Server is healthy"));
+// --- Health Check Route ---
+app.get("/health", (_, res) => res.status(200).send("✅ Server is healthy"));
 
-//  Error Handling
+// --- Greeting Route ---
+app.get("/", (req, res) => {
+  res.send("CineCraft backend is alive and kicking!");
+});
+
+
+// --- Error Handling Middleware ---
+// Catches any errors thrown by previous middleware or route handlers
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Internal Server Error");
+  console.error(" Internal Error:", err.stack); // Log the error stack for debugging
+  res.status(500).send(" Internal Server Error"); // Send a generic error response
 });
 
-// Start Server
-const PORT = process.env.PORT || 10000;
+// --- Start Server ---
+const PORT = process.env.PORT || 10000; // Use port from .env or default to 10000
+const HOST = "0.0.0.0"; // Listen on all available network interfaces
 
-const server =app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+const server = app.listen(PORT, HOST, () => {
+  console.log(`--- Server Configuration ---`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`); // Log current environment
+  console.log(`🌐 CineCraft Backend is live at http://localhost:${PORT}`);
+  console.log(`📊 GraphQL endpoint available at http://localhost:${PORT}/graphql`);
+  console.log(`----------------------------`);
 });
 
-server.keepAliveTimeout = 120000;
-server.headersTimeout  = 120000;
+// --- Keep-alive Settings ---
+// These settings help prevent connections from timing out prematurely
+server.keepAliveTimeout = 120000; // 120 seconds
+server.headersTimeout = 120000;   // 120 seconds

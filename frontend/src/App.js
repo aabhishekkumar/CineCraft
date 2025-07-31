@@ -6,6 +6,7 @@ import Movies from "./cotainers/Movies";
 import SingleMovie from "./components/SingleMovie";
 import AddMovie from "./components/AddMovie";
 
+
 const App = () => {
   return (
     <div lang="en">
