@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "dev": "node app.js"
-  },
+"scripts": {
+  "start": "node app.js",
+  "build": "echo 'No build necessary for backend'"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
