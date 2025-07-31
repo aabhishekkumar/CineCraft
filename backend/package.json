@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+ "start": "node index.js",
 "scripts": {
   "start": "node app.js",
   "build": "echo 'No build necessary for backend'"
