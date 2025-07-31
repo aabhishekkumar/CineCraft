@@ -46,7 +46,9 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server
-app.listen(process.env.PORT || 4000, () => {
-  const port = process.env.PORT || 4000;
-  console.log(` Server running at http://localhost:4000/graphql`);
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
+
