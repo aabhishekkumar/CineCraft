@@ -1,9 +1,21 @@
-const mongoose = require("mongoose");
+const { buildSchema } = require('graphql');
 
-const mongoSchema = new mongoose.Schema({
-  name: String,
-  genre: String,
-  year: String,
-});
+// This is the GraphQL Schema Definition
+const movieSchema = buildSchema(`
+  type Movie {
+    id: ID
+    name: String
+    genre: String
+    year: String
+  }
 
-module.exports = new mongoose.model("MongoMovieModel", mongoSchema);
+  type Query {
+    listMovies: [Movie]
+  }
+
+  type Mutation {
+    addMovie(name: String!, genre: String!, year: String!): Movie
+  }
+`);
+
+module.exports = movieSchema;
