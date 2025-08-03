@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "node app.js",
-    "build": "echo 'No build necessary for backend'"
+    "build": "npm run start'"
   },
   "keywords": [],
   "author": "",
