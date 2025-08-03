@@ -4,8 +4,7 @@
   "description": "",
   "scripts": {
     "start": "node app.js",
-  "build": "echo \"No build step required\""
-
+    "build": "echo \"No build step required\""
   },
   "keywords": [],
   "author": "",
