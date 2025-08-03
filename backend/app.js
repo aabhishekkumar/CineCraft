@@ -8,6 +8,7 @@ const movieSchema = require("./schema/schema");
 const helmet = require("helmet");
 const compression = require("compression");
 const morgan = require("morgan");
+const cors = require("cors");
 const app = express();
 
 app.use(cors());
