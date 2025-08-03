@@ -1,11 +1,10 @@
 // server.js
-
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config(); // Load environment variables from .env file
-const { graphqlHTTP } = require("express-graphql");
+const { createHandler } = require('graphql-http/lib/use/express');
 const movieResolvers = require("./resolvers/resolvers"); // Assuming this exports your root resolvers
-const movieSchema = require("./schema/schema");     // Assuming this exports your GraphQLSchema object
+const movieSchema = require("./schema/schema");      // Assuming this exports your GraphQLSchema object
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
@@ -38,11 +37,12 @@ app.get('/', (req, res) => {
 // This is the core part that exposes your GraphQL API and GraphiQL UI
 app.use(
   "/graphql",
-  graphqlHTTP({
-    schema: movieSchema,    // Your GraphQL schema definition
-    rootValue: movieResolvers, // Your resolver functions for the root types
+  createHandler({
+    schema: movieSchema,       // Your GraphQL schema definition
+    // For graphql-http, the resolvers should be part of your schema definition.
+    // The rootValue option from express-graphql is not used here.
+    // Ensure your movieSchema file already includes the resolvers.
     // Enable GraphiQL UI if not in production environment
-    // GraphiQL is an in-browser IDE for exploring GraphQL APIs
     graphiql: process.env.NODE_ENV !== "production",
   })
 );
@@ -54,7 +54,6 @@ app.get("/health", (_, res) => res.status(200).send("✅ Server is healthy"));
 app.get("/", (req, res) => {
   res.send("CineCraft backend is alive and kicking!");
 });
-
 
 // --- Error Handling Middleware ---
 // Catches any errors thrown by previous middleware or route handlers
